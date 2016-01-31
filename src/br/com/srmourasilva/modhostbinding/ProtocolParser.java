@@ -30,15 +30,16 @@ public class ProtocolParser {
 	}
 
 	/**
+	 * Connect 'effect' in 'anotherEffect'
+	 * 
 	 * connect <origin_port> <destination_port>
 	 * 
 	 * connect two effect audio ports
 	 * e.g.: connect system:capture_1 effect_0:in
 	 */
-	public static String connect(String originPort, String destinationPort) {
-		return null;
+	public static String connect(Lv2Effect effect, Lv2Effect anotherEffect) {
+		return "connect " + effect.getOutName() + " " + anotherEffect.getInName();
 	}
-
 
 	/**
 	 * disconnect <origin_port> <destination_port>
@@ -46,8 +47,8 @@ public class ProtocolParser {
 	 * disconnect two effect audio ports
 	 * e.g.: disconnect system:capture_1 effect_0:in
     */
-	public static String disconnect() {
-		return null;
+	public static String disconnect(Lv2Effect effect, Lv2Effect anotherEffect) {
+		return "disconnect " + effect.getOutName() + " " + anotherEffect.getInName();
 	}
 
 	/**

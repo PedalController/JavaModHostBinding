@@ -5,4 +5,7 @@ public interface Lv2Effect {
 
 	void setInstanceNumber(int size);
 	int getInstanceNumber();
+
+	String getInName();
+	String getOutName();	
 }

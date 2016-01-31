@@ -20,4 +20,18 @@ public class Host {
 
 		connection.sendMessage(ProtocolParser.add(effect));
 	}
+
+	public void connect(Lv2Effect effect, Lv2Effect anotherEffect) {
+		if (!effects.contains(effect) || !effects.contains(anotherEffect))
+			throw new RuntimeException("Has a effect not added!");
+
+		connection.sendMessage(ProtocolParser.connect(effect, anotherEffect));
+	}
+
+	public void disconnect(Lv2Effect effect, Lv2Effect anotherEffect) {
+		if (!effects.contains(effect) || !effects.contains(anotherEffect))
+			throw new RuntimeException("Has a effect not added!");
+
+		connection.sendMessage(ProtocolParser.disconnect(effect, anotherEffect));
+	}
 }
