@@ -25,34 +25,34 @@ public class Host {
 		plugin.setInstanceNumber(plugins.size());
 		plugins.add(plugin);
 
-		System.out.println(connection.send(ProtocolParser.add(plugin)));
+		connection.send(ProtocolParser.add(plugin));
 	}
 	
 	public void connectInputIn(Lv2Plugin plugin) {
 		if (!plugins.contains(plugin))
 			throw new RuntimeException("Plugin " + plugin.getLv2Uri() + " has'nt added!");
 		
-		System.out.println(connection.send(ProtocolParser.connectInputIn(plugin)));
+		connection.send(ProtocolParser.connectInputIn(plugin));
 	}
 	
 	public void connectOnOutput(Lv2Plugin plugin) {
 		if (!plugins.contains(plugin))
 			throw new RuntimeException("Plugin " + plugin.getLv2Uri() + " has'nt added!");
 		
-		System.out.println(connection.send(ProtocolParser.connectOnOutput(plugin)));
+		connection.send(ProtocolParser.connectOnOutput(plugin));
 	}
 	
 	public void connect(Lv2Plugin plugin, Lv2Plugin anotherPlugin) {
 		if (!plugins.contains(plugin) || !plugins.contains(anotherPlugin))
 			throw new RuntimeException("An plugin has'nt added!");
 		
-		System.out.println(connection.send(ProtocolParser.connect(plugin, anotherPlugin)));
+		connection.send(ProtocolParser.connect(plugin, anotherPlugin));
 	}
 
 	public void disconnect(Lv2Plugin effect, Lv2Plugin anotherEffect) {
 		if (!plugins.contains(effect) || !plugins.contains(anotherEffect))
 			throw new RuntimeException("Has a effect not added!");
 
-		System.out.println(connection.send(ProtocolParser.disconnect(effect, anotherEffect)));
+		connection.send(ProtocolParser.disconnect(effect, anotherEffect));
 	}
 }

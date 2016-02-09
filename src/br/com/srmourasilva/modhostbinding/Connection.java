@@ -2,7 +2,6 @@ package br.com.srmourasilva.modhostbinding;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
@@ -12,7 +11,10 @@ public class Connection {
 	
 	private static int PORT = 5555;
 
-	private Socket cliente;
+	private Socket client;
+
+	private PrintStream sendStream;
+	private BufferedReader receivedReader;
 
 	public Connection() {
 		this(PORT);
@@ -20,7 +22,9 @@ public class Connection {
 
 	public Connection(int socketPort) {
 		try {
-			this.cliente = new Socket("localhost", socketPort);
+			this.client = new Socket("localhost", socketPort);
+			this.sendStream = new PrintStream(client.getOutputStream());
+			this.receivedReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -29,20 +33,19 @@ public class Connection {
 
 	public String send(String message) {
 		try {
-			PrintStream stream = new PrintStream(cliente.getOutputStream());
-			stream.print(message);
+			sendStream.print(message);
+			String received = readDataReturn(receivedReader);
 			System.out.println("Sended: " + message);
+			System.out.println("Received: " + received);
 			
-			return readDataReturn(cliente.getInputStream());
+			return received;
 
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	private String readDataReturn(InputStream stream) throws IOException {
-		BufferedReader reader = new BufferedReader(new InputStreamReader(cliente.getInputStream()));
-		
+	private String readDataReturn(BufferedReader reader) throws IOException {
 		char[] buffer = new char[1024];
 		int read = 0;
 		StringBuilder sb = new StringBuilder();
@@ -51,8 +54,6 @@ public class Connection {
 		    sb.append(buffer, 0, read);
 		    break;
 		}
-
-		reader.close();
 
 		return sb.toString().trim();
 	}
