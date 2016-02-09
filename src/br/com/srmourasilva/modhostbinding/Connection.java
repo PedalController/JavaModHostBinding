@@ -23,7 +23,7 @@ public class Connection {
 			this.cliente = new Socket("localhost", socketPort);
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -31,23 +31,29 @@ public class Connection {
 		try {
 			PrintStream stream = new PrintStream(cliente.getOutputStream());
 			stream.print(message);
+			System.out.println("Sended: " + message);
+			
 			return readDataReturn(cliente.getInputStream());
 
 		} catch (IOException e) {
-			e.printStackTrace();
-			throw new RuntimeException();
+			throw new RuntimeException(e);
 		}
 	}
 
-	public String readDataReturn(InputStream stream) throws IOException {
-		StringBuilder builder = new StringBuilder();
+	private String readDataReturn(InputStream stream) throws IOException {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(cliente.getInputStream()));
+		
+		char[] buffer = new char[1024];
+		int read = 0;
+		StringBuilder sb = new StringBuilder();
+		
+		while ((read = reader.read(buffer, 0, buffer.length)) > 0) {
+		    sb.append(buffer, 0, read);
+		    break;
+		}
 
-		String str;
+		reader.close();
 
-		while ((str = reader.readLine()) != null)
-            builder.append(str + "\n" );
-
-		return builder.toString();
+		return sb.toString().trim();
 	}
 }
