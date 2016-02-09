@@ -20,10 +20,24 @@ public class Host {
 
 		connection.send(ProtocolParser.add(plugin));
 	}
-
+	
+	public void connectInputIn(Lv2Plugin plugin) {
+		if (!plugins.contains(plugin))
+			throw new RuntimeException("Plugin " + plugin.getLv2Uri() + " has'nt added!");
+		
+		connection.send(ProtocolParser.connectInputIn(plugin));
+	}
+	
+	public void connectOnOutput(Lv2Plugin plugin) {
+		if (!plugins.contains(plugin))
+			throw new RuntimeException("Plugin " + plugin.getLv2Uri() + " has'nt added!");
+		
+		connection.send(ProtocolParser.connectOnOutput(plugin));
+	}
+	
 	public void connect(Lv2Plugin plugin, Lv2Plugin anotherPlugin) {
 		if (!plugins.contains(plugin) || !plugins.contains(anotherPlugin))
-			throw new RuntimeException("An effect has'nt added!");
+			throw new RuntimeException("An plugin has'nt added!");
 		
 		connection.send(ProtocolParser.connect(plugin, anotherPlugin));
 	}

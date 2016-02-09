@@ -9,7 +9,7 @@ import br.com.srmourasilva.lv2library.Lv2PortType;
  * string command
  */
 public class ProtocolParser {
-
+	
 	/**
 	 * add <lv2_uri> <instance_number>
 	 * 
@@ -31,6 +31,20 @@ public class ProtocolParser {
 		return "remove " + plugin.getInstanceNumber();
 	}
 
+	/**
+	 * Connect system input in 'plugin'
+	 */
+	public static String connectInputIn(Lv2Plugin plugin) {
+		return "connect system:capture_1 " + getInNameOf(plugin);
+	}
+	
+	/**
+	 * Connect plugin on output
+	 */
+	public static String connectOnOutput(Lv2Plugin plugin) {
+		return "connect " + getOutNameOf(plugin) + " system:playback_1";
+	}
+	
 	/**
 	 * Connect 'plugin' in 'anotherPlugin'
 	 * 
