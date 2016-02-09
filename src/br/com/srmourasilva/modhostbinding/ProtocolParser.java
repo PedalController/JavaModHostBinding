@@ -1,6 +1,8 @@
 package br.com.srmourasilva.modhostbinding;
 
-import br.com.srmourasilva.test.Lv2Effect;
+import br.com.srmourasilva.lv2library.Lv2Plugin;
+import br.com.srmourasilva.lv2library.Lv2Port;
+import br.com.srmourasilva.lv2library.Lv2PortType;
 
 /**
  * Prepare the objects to <a href="https://github.com/moddevices/mod-host">mod-parse</a>
@@ -15,8 +17,8 @@ public class ProtocolParser {
 	 * e.g.: add http://lv2plug.in/plugins/eg-amp 0
 	 * instance_number must be any value between 0 ~ 9999, inclusively
 	 */
-	public static String add(Lv2Effect effect) {
-		return "add " + effect.getLv2Uri() + " " + effect.getInstanceNumber();
+	public static String add(Lv2Plugin plugin) {
+		return "add " + plugin.getLv2Uri() + " " + plugin.getInstanceNumber();
 	}
 
 	/**
@@ -25,36 +27,46 @@ public class ProtocolParser {
 	 * remove a LV2 plugin instance (and also the jack client)
 	 * e.g.: remove 0
 	 */
-	public static String remove(Lv2Effect effect) {
-		return "remove " + effect.getInstanceNumber();
+	public static String remove(Lv2Plugin plugin) {
+		return "remove " + plugin.getInstanceNumber();
 	}
 
 	/**
-	 * Connect 'effect' in 'anotherEffect'
+	 * Connect 'plugin' in 'anotherPlugin'
 	 * 
 	 * connect <origin_port> <destination_port>
 	 * 
-	 * connect two effect audio ports
-	 * e.g.: connect system:capture_1 effect_0:in
+	 * connect two plugin audio ports
+	 * e.g.: connect system:capture_1 plugin_0:in
 	 */
-	public static String connect(Lv2Effect effect, Lv2Effect anotherEffect) {
-		return "connect " + effect.getOutName() + " " + anotherEffect.getInName();
+	public static String connect(Lv2Plugin plugin, Lv2Plugin anotherPlugin) {
+		return "connect " + getOutNameOf(plugin) + " " + getInNameOf(anotherPlugin);
+	}
+	
+	private static String getOutNameOf(Lv2Plugin plugin) {
+		Lv2Port output = plugin.getPorts(Lv2PortType.AudioPort, Lv2PortType.OutputPort).get(0);
+		return plugin.getName() + ":" + output.getSymbol();
+	}
+	
+	private static String getInNameOf(Lv2Plugin plugin) {
+		Lv2Port input  = plugin.getPorts(Lv2PortType.AudioPort, Lv2PortType.InputPort).get(0);
+		return plugin.getName() + ":" + input.getSymbol();
 	}
 
 	/**
 	 * disconnect <origin_port> <destination_port>
 	 * 
-	 * disconnect two effect audio ports
-	 * e.g.: disconnect system:capture_1 effect_0:in
+	 * disconnect two plugin audio ports
+	 * e.g.: disconnect system:capture_1 plugin_0:in
     */
-	public static String disconnect(Lv2Effect effect, Lv2Effect anotherEffect) {
-		return "disconnect " + effect.getOutName() + " " + anotherEffect.getInName();
+	public static String disconnect(Lv2Plugin plugin, Lv2Plugin anotherPlugin) {
+		return "disconnect " + getOutNameOf(plugin) + " " + getInNameOf(anotherPlugin);
 	}
 
 	/**
 	 * preset_load <instance_number> <preset_uri>
 	 * 
-	 * load a preset state to given effect instance
+	 * load a preset state to given plugin instance
 	 * e.g.: preset_load 0 "http://drobilla.net/plugins/mda/presets#JX10-moogcury-lite"
 	 */
 	public static String presetLoad() {
@@ -64,7 +76,7 @@ public class ProtocolParser {
     /**
      * preset_save <instance_number> <preset_name> <dir> <file_name>
      * 
-     * save a preset state from given effect instance
+     * save a preset state from given plugin instance
      * e.g.: preset_save 0 "My Preset" /home/user/.lv2/my-presets.lv2 mypreset.ttl
      */
     public static String presetSave() {
@@ -105,7 +117,7 @@ public class ProtocolParser {
     /**
      * param_monitor <instance_number> <param_symbol> <cond_op> <value>
      * 
-     * do monitoring a effect instance control port according given condition
+     * do monitoring a plugin instance control port according given condition
      * e.g: param_monitor 0 gain > 2.50
      */
     public static String paramMonitor() {
@@ -125,13 +137,13 @@ public class ProtocolParser {
 	}
 
     
-    public enum EffectStatus {
+    public enum PluginStatus {
     	BYPASS(1),
     	PROCESS(0);
     	
     	private int status;
 
-		private EffectStatus(int status) {
+		private PluginStatus(int status) {
 			this.status = status;
 		}
     	
@@ -143,12 +155,12 @@ public class ProtocolParser {
     /**
      * bypass <instance_number> <bypass_value>
      * 
-     * toggle effect processing
+     * toggle plugin processing
      * e.g.: bypass 0 1
-     * if bypass_value = 1 bypass effect
-     * if bypass_value = 0 process effect
+     * if bypass_value = 1 bypass plugin
+     * if bypass_value = 0 process plugin
      */
-	public static String bypass(Lv2Effect effect, EffectStatus status) {
+	public static String bypass(Lv2Plugin plugin, PluginStatus status) {
 		return "bypass " + status.getStatus();
 	}
 
